@@ -12,6 +12,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import com.cipollomods.utilityareas.event.AreaVisualizer;
+import net.minecraft.server.level.ServerPlayer;
 
 public class UACommand {
 
@@ -27,6 +29,8 @@ public class UACommand {
                 .then(registerScan())
                 .then(registerWhereAmI())
                 .then(registerCreate())
+                .then(registerShow())
+                .then(registerHide())
         );
     }
 
@@ -251,5 +255,39 @@ public class UACommand {
         AreaManager.getInstance().addArea(area);
         source.sendSuccess(() -> Component.literal("Área creada: " + id + " [" + type + "] [" + shape + "]"), false);
         return 1;
+    }
+    // /ua show <id>
+    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> registerShow() {
+        return Commands.literal("show")
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .executes(ctx -> {
+                            if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                                ctx.getSource().sendFailure(Component.literal("Solo jugadores pueden usar este comando."));
+                                return 0;
+                            }
+                            String id = StringArgumentType.getString(ctx, "id");
+                            return AreaManager.getInstance().getArea(id).map(area -> {
+                                AreaVisualizer.getInstance().show(player, area);
+                                ctx.getSource().sendSuccess(() -> Component.literal("Mostrando área: " + id), false);
+                                return 1;
+                            }).orElseGet(() -> {
+                                ctx.getSource().sendFailure(Component.literal("Área no encontrada: " + id));
+                                return 0;
+                            });
+                        }));
+    }
+
+    // /ua hide
+    private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> registerHide() {
+        return Commands.literal("hide")
+                .executes(ctx -> {
+                    if (!(ctx.getSource().getEntity() instanceof ServerPlayer player)) {
+                        ctx.getSource().sendFailure(Component.literal("Solo jugadores pueden usar este comando."));
+                        return 0;
+                    }
+                    AreaVisualizer.getInstance().hide(player);
+                    ctx.getSource().sendSuccess(() -> Component.literal("Visualización ocultada."), false);
+                    return 1;
+                });
     }
 }

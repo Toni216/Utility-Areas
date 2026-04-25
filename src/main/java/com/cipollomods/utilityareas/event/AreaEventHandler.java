@@ -11,6 +11,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import com.cipollomods.utilityareas.event.AreaVisualizer;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.*;
 
@@ -30,6 +32,9 @@ public class AreaEventHandler {
         for (ServerLevel level : event.getServer().getAllLevels()) {
             for (Player player : level.players()) {
                 handlePlayer(player, level);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    AreaVisualizer.getInstance().tick(serverPlayer);
+                }
             }
 
             // Tick de cada área activa

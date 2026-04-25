@@ -66,4 +66,9 @@ public abstract class Area {
         area.z2 = z2;
         return area;
     }
+
+    public double getX1() { return x1; }
+    public double getZ1() { return z1; }
+    public double getX2() { return x2; }
+    public double getZ2() { return z2; }
 }
