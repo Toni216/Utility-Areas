@@ -11,6 +11,11 @@ import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Área que aplica efectos de poción a los jugadores dentro de su zona.
+ * Los efectos se aplican cada tick desde {@link com.cipollomods.utilityareas.event.AreaEventHandler}.
+ * Si {@code removeOnExit} está activo, los efectos se eliminan al salir.
+ */
 public class PotionArea extends Area {
 
     private final List<MobEffectInstance> effects = new ArrayList<>();
@@ -41,6 +46,10 @@ public class PotionArea extends Area {
         // para tener acceso a la lista de jugadores dentro del área
     }
 
+    /**
+     * Aplica todos los efectos configurados al jugador.
+     * Usa partículas ambientales reducidas para no saturar la pantalla.
+     */
     public void applyEffects(Player player) {
         for (MobEffectInstance effect : effects) {
             // Creamos una nueva instancia para evitar compartir estado

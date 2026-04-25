@@ -4,11 +4,15 @@ import com.cipollomods.utilityareas.area.Area;
 import com.cipollomods.utilityareas.area.AreaShape;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Gestor singleton de visualizaciones de áreas mediante partículas.
+ * Cada jugador puede tener activa la visualización de una sola área a la vez.
+ * Las partículas se envían únicamente al jugador que solicitó la visualización.
+ */
 public class AreaVisualizer {
 
     private static final AreaVisualizer INSTANCE = new AreaVisualizer();
@@ -28,6 +32,7 @@ public class AreaVisualizer {
         activeVisualizations.remove(player.getUUID());
     }
 
+    /** Renderiza las partículas del área activa para el jugador dado. */
     public void tick(ServerPlayer player) {
         Area area = activeVisualizations.get(player.getUUID());
         if (area == null) return;
@@ -45,6 +50,7 @@ public class AreaVisualizer {
         double r = area.getRadius();
         double y = player.getY();
 
+        // Más puntos cuanto mayor sea el radio para mantener la densidad visual
         int points = (int) Math.max(36, r * 2);
         for (int i = 0; i < points; i++) {
             double angle = (2 * Math.PI / points) * i;

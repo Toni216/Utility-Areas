@@ -7,6 +7,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * Área que muestra mensajes de chat al entrar y salir de la zona.
+ * Soporta cooldown configurable para evitar spam de mensajes.
+ */
 public class SignArea extends Area {
 
     private String messageEnter;

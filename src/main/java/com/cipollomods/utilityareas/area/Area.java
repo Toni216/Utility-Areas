@@ -1,5 +1,9 @@
 package com.cipollomods.utilityareas.area;
 
+/**
+ * Clase base abstracta para todos los tipos de área.
+ * Un área define una zona geométrica en el mundo con un comportamiento asociado.
+ */
 public abstract class Area {
 
     protected final String id;
@@ -7,12 +11,12 @@ public abstract class Area {
     protected final AreaShape shape;
     protected boolean active;
 
-    // Círculo
+    // Campos para área circular
     protected double centerX;
     protected double centerZ;
     protected double radius;
 
-    // Rectángulo
+    // Campos para área rectangular
     protected double x1, z1, x2, z2;
 
     protected Area(String id, AreaType type, AreaShape shape) {
@@ -22,7 +26,10 @@ public abstract class Area {
         this.active = true;
     }
 
-    // Comprueba si unas coordenadas están dentro del área
+    /**
+     * Comprueba si las coordenadas dadas están dentro del área.
+     * Utiliza distancia euclidiana para círculos y AABB para rectángulos.
+     */
     public boolean contains(double x, double z) {
         if (shape == AreaShape.CIRCLE) {
             double dx = x - centerX;
@@ -34,7 +41,7 @@ public abstract class Area {
         }
     }
 
-    // Getters
+
     public String getId() { return id; }
     public AreaType getType() { return type; }
     public AreaShape getShape() { return shape; }
@@ -45,7 +52,7 @@ public abstract class Area {
     public double getCenterZ() { return centerZ; }
     public double getRadius() { return radius; }
 
-    // Método que cada tipo de área implementará con su lógica propia
+    // Metodo que cada tipo de área implementará con su lógica propia
     public abstract void onPlayerEnter(net.minecraft.world.entity.player.Player player);
     public abstract void onPlayerExit(net.minecraft.world.entity.player.Player player);
     public abstract void onTick(net.minecraft.server.level.ServerLevel level);

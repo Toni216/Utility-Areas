@@ -5,11 +5,14 @@ import com.cipollomods.utilityareas.area.AreaShape;
 import com.cipollomods.utilityareas.area.AreaType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * Área que teletransporta a los jugadores al entrar en su zona.
+ * Incluye un cooldown por jugador para evitar bucles de teletransporte.
+ */
 public class TeleportArea extends Area {
 
     private double destX, destY, destZ;
@@ -61,6 +64,9 @@ public class TeleportArea extends Area {
     public float getDestYaw() { return destYaw; }
     public float getDestPitch() { return destPitch; }
 
+    /**
+     * Establece la posición y orientación de destino del teletransporte.
+     */
     public void setDestination(double x, double y, double z, float yaw, float pitch) {
         this.destX = x;
         this.destY = y;

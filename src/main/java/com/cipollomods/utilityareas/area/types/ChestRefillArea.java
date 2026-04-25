@@ -7,10 +7,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
-
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Área que rellena automáticamente los cofres dentro de su zona cada cierto intervalo.
+ * El contenido de cada cofre se guarda como snapshot en el momento de su registro.
+ */
 public class ChestRefillArea extends Area {
 
     private int refillIntervalMinutes;
@@ -47,6 +50,9 @@ public class ChestRefillArea extends Area {
         }
     }
 
+    /**
+     * Rellena todos los cofres registrados con su snapshot guardado.
+     */
     public void refill(ServerLevel level) {
         for (Map.Entry<BlockPos, net.minecraft.world.item.ItemStack[]> entry : snapshots.entrySet()) {
             if (level.getBlockEntity(entry.getKey()) instanceof ChestBlockEntity chest) {
@@ -63,6 +69,9 @@ public class ChestRefillArea extends Area {
         // El escaneo de cofres se hará desde el EventHandler al crear el área
     }
 
+    /**
+     * Registra el snapshot de un cofre en una posición concreta.
+     */
     public void addSnapshot(BlockPos pos, net.minecraft.world.item.ItemStack[] items) {
         snapshots.put(pos, items);
     }

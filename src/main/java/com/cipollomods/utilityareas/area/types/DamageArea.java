@@ -7,6 +7,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * Área que aplica daño periódico a los jugadores dentro de su zona.
+ * El intervalo y la fuente de daño son configurables.
+ * La lógica de tick se gestiona en {@link com.cipollomods.utilityareas.event.AreaEventHandler}.
+ */
 public class DamageArea extends Area {
 
     private float damageAmount;
@@ -35,6 +40,10 @@ public class DamageArea extends Area {
         // La aplicación de daño a jugadores se gestiona en el EventHandler
     }
 
+    /**
+     * Aplica daño al jugador usando la fuente de daño configurada.
+     * Fuentes soportadas: generic, fire, magic, void, starve.
+     */
     public void applyDamage(Player player, ServerLevel level) {
         DamageSource source = switch (damageSourceType) {
             case "fire" -> level.damageSources().inFire();

@@ -11,11 +11,14 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.MobSpawnEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import com.cipollomods.utilityareas.event.AreaVisualizer;
 import net.minecraft.server.level.ServerPlayer;
-
 import java.util.*;
 
+/**
+ * Manejador de eventos de Forge para la lógica de las áreas.
+ * Gestiona la detección de entradas y salidas de jugadores,
+ * la aplicación de efectos y daño, y el cancelado de spawns hostiles.
+ */
 @Mod.EventBusSubscriber(modid = "utilityareas", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class AreaEventHandler {
 
@@ -44,6 +47,10 @@ public class AreaEventHandler {
         }
     }
 
+    /**
+     * Procesa la posición de un jugador, detectando entradas y salidas de áreas
+     * y aplicando los efectos correspondientes.
+     */
     private static void handlePlayer(Player player, ServerLevel level) {
         UUID uuid = player.getUUID();
         double x = player.getX();

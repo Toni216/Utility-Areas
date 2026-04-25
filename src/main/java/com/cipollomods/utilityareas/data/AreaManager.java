@@ -2,9 +2,12 @@ package com.cipollomods.utilityareas.data;
 
 import com.cipollomods.utilityareas.UtilityAreas;
 import com.cipollomods.utilityareas.area.Area;
-
 import java.util.*;
 
+/**
+ * Gestor singleton de todas las áreas del mod.
+ * Proporciona métodos para registrar, eliminar y consultar áreas en memoria.
+ */
 public class AreaManager {
 
     private static final AreaManager INSTANCE = new AreaManager();
@@ -40,6 +43,9 @@ public class AreaManager {
                 .toList();
     }
 
+    /**
+     * Devuelve todas las áreas activas que contienen las coordenadas dadas.
+     */
     public List<Area> getAreasContaining(double x, double z) {
         return getActiveAreas().stream()
                 .filter(area -> area.contains(x, z))

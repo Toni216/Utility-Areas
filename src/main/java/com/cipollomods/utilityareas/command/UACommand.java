@@ -5,6 +5,7 @@ import com.cipollomods.utilityareas.area.AreaShape;
 import com.cipollomods.utilityareas.area.AreaType;
 import com.cipollomods.utilityareas.area.types.*;
 import com.cipollomods.utilityareas.data.AreaManager;
+import com.cipollomods.utilityareas.event.AreaVisualizer;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -12,9 +13,11 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import com.cipollomods.utilityareas.event.AreaVisualizer;
-import net.minecraft.server.level.ServerPlayer;
 
+/**
+ * Registro y lógica de todos los subcomandos del comando principal {@code /ua}.
+ * Requiere nivel de operador 4 para todos los subcomandos.
+ */
 public class UACommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -221,6 +224,10 @@ public class UACommand {
                         ));
     }
 
+    /**
+     * Lógica compartida de creación de área para los subcomandos circle y rect.
+     * Valida el id y el tipo antes de instanciar el área correspondiente.
+     */
     private static int createArea(CommandSourceStack source, String id, String tipo,
                                   AreaShape shape, double x, double z, double radio,
                                   double x1, double z1, double x2, double z2) {
@@ -256,6 +263,7 @@ public class UACommand {
         source.sendSuccess(() -> Component.literal("Área creada: " + id + " [" + type + "] [" + shape + "]"), false);
         return 1;
     }
+
     // /ua show <id>
     private static com.mojang.brigadier.builder.LiteralArgumentBuilder<CommandSourceStack> registerShow() {
         return Commands.literal("show")

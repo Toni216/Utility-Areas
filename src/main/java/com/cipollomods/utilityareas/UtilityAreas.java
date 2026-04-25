@@ -9,6 +9,10 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 
+/**
+ * Clase principal del mod UtilityAreas.
+ * Gestiona la inicialización del mod y el registro de comandos.
+ */
 @Mod(UtilityAreas.MOD_ID)
 @Mod.EventBusSubscriber(modid = UtilityAreas.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class UtilityAreas {
@@ -24,6 +28,9 @@ public class UtilityAreas {
         LOGGER.info("UtilityAreas initialized!");
     }
 
+    /**
+     * Registra los comandos del mod en el dispatcher de Brigadier.
+     */
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         UACommand.register(event.getDispatcher());

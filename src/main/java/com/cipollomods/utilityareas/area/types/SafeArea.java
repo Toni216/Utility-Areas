@@ -6,6 +6,10 @@ import com.cipollomods.utilityareas.area.AreaType;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
+/**
+ * Área que cancela el spawn de mobs hostiles dentro de su zona.
+ * La lógica de cancelación se gestiona en {@link com.cipollomods.utilityareas.event.AreaEventHandler}.
+ */
 public class SafeArea extends Area {
 
     public SafeArea(String id, AreaShape shape) {
