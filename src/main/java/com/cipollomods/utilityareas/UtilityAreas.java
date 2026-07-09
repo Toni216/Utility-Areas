@@ -1,8 +1,11 @@
 package com.cipollomods.utilityareas;
 
 import com.cipollomods.utilityareas.command.UACommand;
+import com.cipollomods.utilityareas.data.AreaPersistenceManager;
+import com.cipollomods.utilityareas.data.LootGroupManager;
 import com.mojang.logging.LogUtils;
 import net.minecraftforge.event.RegisterCommandsEvent;
+import net.minecraftforge.event.server.ServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -34,5 +37,15 @@ public class UtilityAreas {
     @SubscribeEvent
     public static void onRegisterCommands(RegisterCommandsEvent event) {
         UACommand.register(event.getDispatcher());
+    }
+
+    /**
+     * Carga las áreas guardadas en areas.json cuando el servidor arranca,
+     * antes de que empiece a procesar jugadores o ticks.
+     */
+    @SubscribeEvent
+    public static void onServerStarting(ServerStartingEvent event) {
+        LootGroupManager.getInstance().load();
+        AreaPersistenceManager.getInstance().load();
     }
 }

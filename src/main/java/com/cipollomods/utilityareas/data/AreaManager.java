@@ -24,9 +24,27 @@ public class AreaManager {
         UtilityAreas.LOGGER.info("Area añadida: {}", area.getId());
     }
 
+    /**
+     * Registra un área sin loguearla como "añadida". Se usa exclusivamente
+     * durante la carga desde areas.json, para no confundir esa operación
+     * con una creación real hecha por un operador.
+     */
+    public void addAreaSilent(Area area) {
+        areas.put(area.getId(), area);
+    }
+
     public void removeArea(String id) {
         areas.remove(id);
         UtilityAreas.LOGGER.info("Area eliminada: {}", id);
+    }
+
+    /**
+     * Delega el guardado en {@link AreaPersistenceManager}. Los comandos que
+     * modifican el estado de una o varias áreas deben llamar a este método
+     * al terminar, para que los cambios sobrevivan a un reinicio del servidor.
+     */
+    public void save() {
+        AreaPersistenceManager.getInstance().save();
     }
 
     public Optional<Area> getArea(String id) {

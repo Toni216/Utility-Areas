@@ -63,4 +63,9 @@ public class DamageArea extends Area {
 
     public String getDamageSourceType() { return damageSourceType; }
     public void setDamageSourceType(String damageSourceType) { this.damageSourceType = damageSourceType; }
+
+    @Override
+    protected String describeSpecific() {
+        return "  Daño: " + damageAmount + " cada " + intervalTicks + " ticks (fuente: " + damageSourceType + ")\n";
+    }
 }

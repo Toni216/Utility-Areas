@@ -78,4 +78,28 @@ public abstract class Area {
     public double getZ1() { return z1; }
     public double getX2() { return x2; }
     public double getZ2() { return z2; }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Área '").append(id).append("' [").append(type).append("] ")
+                .append(active ? "(activa)" : "(inactiva)").append("\n");
+        if (shape == AreaShape.CIRCLE) {
+            sb.append("  Forma: círculo, centro=(").append(centerX).append(", ").append(centerZ)
+                    .append("), radio=").append(radius).append("\n");
+        } else {
+            sb.append("  Forma: rectángulo, de (").append(x1).append(", ").append(z1)
+                    .append(") a (").append(x2).append(", ").append(z2).append(")\n");
+        }
+        sb.append(describeSpecific());
+        return sb.toString();
+    }
+
+    /**
+     * Hook para que cada subclase añada sus propios campos a la salida de
+     * /ua info. Por defecto no añade nada (p. ej. SafeArea no lo necesita).
+     */
+    protected String describeSpecific() {
+        return "";
+    }
 }
