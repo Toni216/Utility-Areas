@@ -10,9 +10,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
@@ -29,7 +32,11 @@ import java.util.Set;
 /**
  * Gestor singleton de la persistencia de áreas en disco.
  * Guarda y carga el estado de {@link AreaManager} en
- * {@code config/utilityareas/areas.json} usando Gson.
+ * {@code <mundo>/serverconfig/utilityareas/areas.json} usando Gson.
+ *
+ * <p>Se guarda dentro de la carpeta del propio mundo (en vez de en la
+ * carpeta global {@code config/}) para que las áreas viajen con el save:
+ * cambiar de mundo o restaurar un backup no deja atrás las áreas creadas.</p>
  *
  * <p>Convierte cada {@link Area} a/desde {@link AreaData} porque Gson no
  * reconstruye bien jerarquías de clases abstractas por sí solo.</p>
@@ -46,8 +53,19 @@ public class AreaPersistenceManager {
         return INSTANCE;
     }
 
+    /**
+     * Devuelve la ruta de areas.json dentro de {@code <mundo>/serverconfig/utilityareas/}.
+     * Si por algún motivo no hay un servidor corriendo todavía (no debería
+     * pasar en el flujo normal, ya que load()/save() solo se llaman con el
+     * server activo), cae de vuelta a la carpeta config/ global como red de
+     * seguridad para no crashear.
+     */
     private Path getFilePath() {
-        return FMLPaths.CONFIGDIR.get().resolve("utilityareas").resolve(FILE_NAME);
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        Path base = (server != null)
+                ? server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve("utilityareas")
+                : FMLPaths.CONFIGDIR.get().resolve("utilityareas");
+        return base.resolve(FILE_NAME);
     }
 
     /**

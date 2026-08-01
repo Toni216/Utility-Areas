@@ -64,23 +64,40 @@ public class AreaVisualizer {
     }
 
     private void tickRect(ServerPlayer player, Area area) {
-        double x1 = area.getX1();
-        double z1 = area.getZ1();
-        double x2 = area.getX2();
-        double z2 = area.getZ2();
-        double y = player.getY();
+        double x1 = Math.min(area.getX1(), area.getX2());
+        double x2 = Math.max(area.getX1(), area.getX2());
+        double z1 = Math.min(area.getZ1(), area.getZ2());
+        double z2 = Math.max(area.getZ1(), area.getZ2());
 
+        if (area.hasHeightBounds()) {
+            double yMin = area.getYMin();
+            double yMax = area.getYMax();
+            drawRectAt(player, x1, z1, x2, z2, yMin);
+            drawRectAt(player, x1, z1, x2, z2, yMax);
+            spawnVerticalEdge(player, x1, z1, yMin, yMax);
+            spawnVerticalEdge(player, x1, z2, yMin, yMax);
+            spawnVerticalEdge(player, x2, z1, yMin, yMax);
+            spawnVerticalEdge(player, x2, z2, yMin, yMax);
+        } else {
+            drawRectAt(player, x1, z1, x2, z2, player.getY());
+        }
+    }
+
+    private void drawRectAt(ServerPlayer player, double x1, double z1, double x2, double z2, double y) {
         double step = 1.0;
-
-        // Borde norte y sur
         for (double x = x1; x <= x2; x += step) {
             spawnParticle(player, x, y, z1);
             spawnParticle(player, x, y, z2);
         }
-        // Borde oeste y este
         for (double z = z1; z <= z2; z += step) {
             spawnParticle(player, x1, y, z);
             spawnParticle(player, x2, y, z);
+        }
+    }
+
+    private void spawnVerticalEdge(ServerPlayer player, double x, double z, double yMin, double yMax) {
+        for (double y = yMin; y <= yMax; y += 1.0) {
+            spawnParticle(player, x, y, z);
         }
     }
 

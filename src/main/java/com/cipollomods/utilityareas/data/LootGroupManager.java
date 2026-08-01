@@ -5,10 +5,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.io.IOException;
@@ -26,7 +29,11 @@ import java.util.Set;
 /**
  * Gestor singleton de los grupos de loot configurables para
  * {@link com.cipollomods.utilityareas.area.types.ChestRefillArea}, cargados
- * desde {@code config/utilityareas/loot_groups.json}.
+ * desde {@code <mundo>/serverconfig/utilityareas/loot_groups.json}.
+ *
+ * <p>Se guarda dentro de la carpeta del propio mundo (en vez de en la
+ * carpeta global {@code config/}) para que los grupos de loot viajen con
+ * el save, igual que {@link AreaPersistenceManager}.</p>
  *
  * <p>Si el fichero no existe, se genera uno de ejemplo la primera vez, a
  * modo de plantilla editable.</p>
@@ -45,8 +52,18 @@ public class LootGroupManager {
         return INSTANCE;
     }
 
+    /**
+     * Devuelve la ruta de loot_groups.json dentro de
+     * {@code <mundo>/serverconfig/utilityareas/}. Si no hay un servidor
+     * corriendo todavía, cae de vuelta a la carpeta config/ global como
+     * red de seguridad para no crashear.
+     */
     private Path getFilePath() {
-        return FMLPaths.CONFIGDIR.get().resolve("utilityareas").resolve(FILE_NAME);
+        MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        Path base = (server != null)
+                ? server.getWorldPath(LevelResource.ROOT).resolve("serverconfig").resolve("utilityareas")
+                : FMLPaths.CONFIGDIR.get().resolve("utilityareas");
+        return base.resolve(FILE_NAME);
     }
 
     /** Carga (o recarga) los grupos desde disco. Genera un fichero de ejemplo si no existe todavía. */

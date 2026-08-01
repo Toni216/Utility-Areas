@@ -91,6 +91,9 @@ public abstract class Area {
             sb.append("  Forma: rectángulo, de (").append(x1).append(", ").append(z1)
                     .append(") a (").append(x2).append(", ").append(z2).append(")\n");
         }
+        if (hasHeightBounds()) {
+            sb.append("  Altura: de Y=").append(yMin).append(" a Y=").append(yMax).append("\n");
+        }
         sb.append(describeSpecific());
         return sb.toString();
     }
@@ -102,4 +105,30 @@ public abstract class Area {
     protected String describeSpecific() {
         return "";
     }
+
+    // Límite de altura opcional. null en ambos = sin límite (comportamiento
+// por defecto, el que conservan todas las áreas creadas antes de esta
+// función y las creadas sin pasar por corner1/corner2).
+    protected Double yMin;
+    protected Double yMax;
+
+    /**
+     * Comprueba si (x, y, z) está dentro del área, incluyendo el límite de
+     * altura si está configurado. Si no hay límite (yMin/yMax nulos), es
+     * equivalente a contains(x, z).
+     */
+    public boolean contains(double x, double y, double z) {
+        if (!contains(x, z)) return false;
+        if (yMin == null || yMax == null) return true;
+        return y >= yMin && y <= yMax;
+    }
+
+    public void setHeightBounds(double yMin, double yMax) {
+        this.yMin = Math.min(yMin, yMax);
+        this.yMax = Math.max(yMin, yMax);
+    }
+
+    public boolean hasHeightBounds() { return yMin != null && yMax != null; }
+    public Double getYMin() { return yMin; }
+    public Double getYMax() { return yMax; }
 }

@@ -26,6 +26,8 @@ class AreaData {
 
     // Geometría rectangular
     double x1, z1, x2, z2;
+    Double yMin;
+    Double yMax;
 
     // SignArea
     String messageEnter;

@@ -77,4 +77,11 @@ public class AreaManager {
     public void clear() {
         areas.clear();
     }
+
+    public List<Area> getAreasContaining(double x, double y, double z) {
+        return getActiveAreas().stream()
+                .filter(area -> area.contains(x, y, z))
+                .toList();
+    }
+
 }

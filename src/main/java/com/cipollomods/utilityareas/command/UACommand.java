@@ -198,7 +198,7 @@ public class UACommand {
                             Area area = AreaManager.getInstance().getArea(id).get();
                             var players = ctx.getSource().getServer().getPlayerList().getPlayers()
                                     .stream()
-                                    .filter(p -> area.contains(p.getX(), p.getZ()))
+                                    .filter(p -> area.contains(p.getX(), p.getY(), p.getZ()))
                                     .map(p -> p.getName().getString())
                                     .toList();
 
@@ -219,7 +219,7 @@ public class UACommand {
                     boolean any = false;
                     for (Area area : AreaManager.getInstance().getActiveAreas()) {
                         long count = allPlayers.stream()
-                                .filter(p -> area.contains(p.getX(), p.getZ()))
+                                .filter(p -> area.contains(p.getX(), p.getY(), p.getZ()))
                                 .count();
                         if (count > 0) {
                             sb.append("- ").append(area.getId()).append(": ").append(count).append(" jugador(es)\n");
@@ -240,7 +240,7 @@ public class UACommand {
                         ctx.getSource().sendFailure(Component.literal("Solo jugadores pueden usar este comando."));
                         return 0;
                     }
-                    var areas = AreaManager.getInstance().getAreasContaining(player.getX(), player.getZ());
+                    var areas = AreaManager.getInstance().getAreasContaining(player.getX(), player.getY(), player.getZ());
                     String msg = areas.isEmpty()
                             ? "No estás dentro de ningún área."
                             : "Estás dentro de: " + String.join(", ", areas.stream().map(Area::getId).toList());
@@ -511,10 +511,11 @@ public class UACommand {
                         return 0;
                     }
                     double x = player.getX();
+                    double y = player.getY();
                     double z = player.getZ();
-                    corner1Marks.put(player.getUUID(), new double[]{x, z});
+                    corner1Marks.put(player.getUUID(), new double[]{x, y, z});
                     ctx.getSource().sendSuccess(() -> Component.literal(
-                            "Esquina 1 marcada en (" + x + ", " + z + "). Ve a la otra esquina y usa /ua corner2."), false);
+                            "Esquina 1 marcada en (" + x + ", " + y + ", " + z + "). Ve a la otra esquina y usa /ua corner2."), false);
                     return 1;
                 });
     }
@@ -528,10 +529,11 @@ public class UACommand {
                         return 0;
                     }
                     double x = player.getX();
+                    double y = player.getY();
                     double z = player.getZ();
-                    corner2Marks.put(player.getUUID(), new double[]{x, z});
+                    corner2Marks.put(player.getUUID(), new double[]{x, y, z});
                     ctx.getSource().sendSuccess(() -> Component.literal(
-                            "Esquina 2 marcada en (" + x + ", " + z + "). Ya puedes crear el área con: "
+                            "Esquina 2 marcada en (" + x + ", " + y + ", " + z + "). Ya puedes crear el área con: "
                                     + "/ua create <id> <tipo> rect corner"), false);
                     return 1;
                 });
@@ -567,7 +569,8 @@ public class UACommand {
                             + "ve a la otra y usa /ua corner2."));
             return null;
         }
-        return new double[]{c1[0], c1[1], c2[0], c2[1]};
+        // c1/c2 = {x, y, z} → devolvemos {x1, z1, x2, z2, y1, y2}
+        return new double[]{c1[0], c1[2], c2[0], c2[2], c1[1], c2[1]};
     }
 
     // /ua create <id> <tipo> rect corner — crea el área usando las esquinas ya marcadas
@@ -581,6 +584,9 @@ public class UACommand {
                 corners[0], corners[1], corners[2], corners[3]);
 
         if (area != null) {
+            area.setHeightBounds(corners[4], corners[5]);
+            AreaManager.getInstance().save();
+
             ServerPlayer player = (ServerPlayer) ctx.getSource().getEntity();
             corner1Marks.remove(player.getUUID());
             corner2Marks.remove(player.getUUID());
@@ -1073,4 +1079,6 @@ public class UACommand {
         }
         return clazz.cast(area);
     }
+
+
 }

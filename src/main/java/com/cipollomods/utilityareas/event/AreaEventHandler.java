@@ -56,7 +56,8 @@ public class AreaEventHandler {
         double x = player.getX();
         double z = player.getZ();
 
-        List<Area> currentAreasList = AreaManager.getInstance().getAreasContaining(x, z);
+        double y = player.getY();
+        List<Area> currentAreasList = AreaManager.getInstance().getAreasContaining(x, y, z);
         Set<String> currentAreaIds = new HashSet<>();
         for (Area area : currentAreasList) {
             currentAreaIds.add(area.getId());
@@ -107,13 +108,15 @@ public class AreaEventHandler {
         if (!(event.getEntity() instanceof net.minecraft.world.entity.monster.Monster)) return;
 
         double x = event.getEntity().getX();
+        double y = event.getEntity().getY();
         double z = event.getEntity().getZ();
 
-        for (Area area : AreaManager.getInstance().getAreasContaining(x, z)) {
+        for (Area area : AreaManager.getInstance().getAreasContaining(x, y, z)) {
             if (area instanceof SafeArea) {
                 event.setSpawnCancelled(true);
                 return;
             }
         }
+
     }
 }
